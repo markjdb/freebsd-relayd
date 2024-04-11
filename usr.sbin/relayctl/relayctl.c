@@ -160,7 +160,9 @@ main(int argc, char *argv[])
 	case SHOW_HOSTS:
 	case SHOW_RDRS:
 	case SHOW_RELAYS:
+#ifndef __FreeBSD__
 	case SHOW_ROUTERS:
+#endif
 		imsg_compose(ibuf, IMSG_CTL_SHOW_SUM, 0, 0, -1, NULL, 0);
 		printf("%-4s\t%-8s\t%-24s\t%-7s\tStatus\n",
 		    "Id", "Type", "Name", "Avlblty");
@@ -241,7 +243,9 @@ main(int argc, char *argv[])
 			case SHOW_HOSTS:
 			case SHOW_RDRS:
 			case SHOW_RELAYS:
+#ifndef __FreeBSD__
 			case SHOW_ROUTERS:
+#endif
 				done = show_summary_msg(&imsg, res->action);
 				break;
 			case SHOW_SESSIONS:
@@ -347,8 +351,10 @@ show_summary_msg(struct imsg *imsg, int type)
 	struct table		*table;
 	struct host		*host;
 	struct relay		*rlay;
+#ifndef __FreeBSD__
 	struct router		*rt;
 	struct netroute		*nr;
+#endif
 	struct ctl_stats	 stats[PROC_MAX_INSTANCES];
 	char			 name[HOST_NAME_MAX+1];
 
@@ -413,6 +419,7 @@ show_summary_msg(struct imsg *imsg, int type)
 		bcopy(imsg->data, &stats, sizeof(stats));
 		print_statistics(stats);
 		break;
+#ifndef __FreeBSD__
 	case IMSG_CTL_ROUTER:
 		if (!(type == SHOW_SUM || type == SHOW_ROUTERS))
 			break;
@@ -435,6 +442,7 @@ show_summary_msg(struct imsg *imsg, int type)
 		printf("\t%8s\troute: %s/%d\n",
 		    "", name, nr->nr_conf.prefixlen);
 		break;
+#endif
 	case IMSG_CTL_END:
 		return (1);
 	default:

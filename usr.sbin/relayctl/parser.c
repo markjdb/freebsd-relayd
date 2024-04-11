@@ -79,7 +79,9 @@ static const struct token t_show[] = {
 	{KEYWORD,	"hosts",	SHOW_HOSTS,	NULL},
 	{KEYWORD,	"redirects",	SHOW_RDRS,	NULL},
 	{KEYWORD,	"relays",	SHOW_RELAYS,	NULL},
+#ifndef __FreeBSD__
 	{KEYWORD,	"routers",	SHOW_ROUTERS,	NULL},
+#endif
 	{KEYWORD,	"sessions",	SHOW_SESSIONS,	NULL},
 	{ENDTOKEN,	"",		NONE,		NULL}
 };
