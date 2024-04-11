@@ -18,7 +18,11 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#ifdef __FreeBSD__
+#include <sys/param.h>
+#else
 #include <sys/types.h>
+#endif
 
 #include <limits.h>
 #include <stdio.h>
