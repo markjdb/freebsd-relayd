@@ -587,9 +587,16 @@ print_statistics(struct ctl_stats stats[PROC_MAX_INSTANCES + 1])
 	printf("\t%8s\ttotal: %llu sessions\n"
 	    "\t%8s\tlast: %u/%llus %u/h %u/d sessions\n"
 	    "\t%8s\taverage: %u/%llus %u/h %u/d sessions\n",
+#ifndef __FreeBSD__
 	    "", crs.cnt,
 	    "", crs.last, crs.interval,
 	    crs.last_hour, crs.last_day,
 	    "", crs.avg, crs.interval,
+#else
+	    "", (long long unsigned int)crs.cnt,
+	    "", crs.last, (long long unsigned int)crs.interval,
+	    crs.last_hour, crs.last_day,
+	    "", crs.avg, (long long unsigned int)crs.interval,
+#endif
 	    crs.avg_hour, crs.avg_day);
 }
