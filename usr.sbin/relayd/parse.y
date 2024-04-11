@@ -164,7 +164,11 @@ typedef struct {
 		struct {
 			struct sockaddr_storage	 ss;
 			int			 prefixlen;
+#ifdef __FreeBSD__
+			char			 name[MAXHOSTNAMELEN];
+#else
 			char			 name[HOST_NAME_MAX+1];
+#endif
 		}			 addr;
 		struct {
 			enum digest_type type;

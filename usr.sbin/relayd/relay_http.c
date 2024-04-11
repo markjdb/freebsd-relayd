@@ -1006,7 +1006,11 @@ relay_lookup_url(struct ctl_relay_event *cre, const char *host, struct kv *kv)
 	struct http_descriptor	*desc = (struct http_descriptor *)cre->desc;
 	int			 i, j, dots;
 	char			*hi[RELAY_MAXLOOKUPLEVELS], *p, *pp, *c, ch;
+#ifdef __FreeBSD__
+	char			 ph[MAXHOSTNAMELEN];
+#else
 	char			 ph[HOST_NAME_MAX+1];
+#endif
 	int			 ret;
 
 	if (desc->http_path == NULL)

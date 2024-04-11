@@ -178,7 +178,11 @@ struct ctl_script {
 	objid_t		 host;
 	int		 retval;
 	struct timeval	 timeout;
+#ifdef __FreeBSD__
+	char		 name[MAXHOSTNAMELEN];
+#else
 	char		 name[HOST_NAME_MAX+1];
+#endif
 	char		 path[PATH_MAX];
 };
 
@@ -444,7 +448,11 @@ struct host_config {
 	objid_t			 parentid;
 	objid_t			 tableid;
 	int			 retry;
+#ifdef __FreeBSD__
+	char			 name[MAXHOSTNAMELEN];
+#else
 	char			 name[HOST_NAME_MAX+1];
+#endif
 	struct sockaddr_storage	 ss;
 	int			 ttl;
 	int			 priority;
@@ -824,7 +832,11 @@ struct relay_config {
 	objid_t			 id;
 	u_int32_t		 flags;
 	objid_t			 proto;
+#ifdef __FreeBSD__
+	char			 name[MAXHOSTNAMELEN];
+#else
 	char			 name[HOST_NAME_MAX+1];
+#endif
 	in_port_t		 port;
 	in_port_t		 dstport;
 	int			 dstretry;
@@ -902,7 +914,11 @@ TAILQ_HEAD(netroutelist, netroute);
 struct router_config {
 	objid_t			 id;
 	u_int32_t		 flags;
+#ifdef __FreeBSD__
+	char			 name[MAXHOSTNAMELEN];
+#else
 	char			 name[HOST_NAME_MAX+1];
+#endif
 	char			 label[RT_LABEL_SIZE];
 	int			 nroutes;
 	objid_t			 gwtable;
