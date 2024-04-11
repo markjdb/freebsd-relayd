@@ -1038,6 +1038,7 @@ enum imsg_type {
 	IMSG_SCRIPT,
 #ifndef __FreeBSD__
 	IMSG_AGENTXSOCK,
+#endif
 	IMSG_BINDANY,
 #ifndef __FreeBSD__
 	IMSG_RTMSG,		/* from pfe to parent */

@@ -233,7 +233,9 @@ pfe_dispatch_parent(int fd, struct privsep_proc *p, struct imsg *imsg)
 	case IMSG_CFG_DONE:
 		config_getcfg(env, imsg);
 		init_tables(env);
+#ifndef __FreeBSD__
 		agentx_init(env);
+#endif
 		break;
 	case IMSG_CTL_START:
 		pfe_setup_events();
@@ -242,9 +244,11 @@ pfe_dispatch_parent(int fd, struct privsep_proc *p, struct imsg *imsg)
 	case IMSG_CTL_RESET:
 		config_getreset(env, imsg);
 		break;
+#ifndef __FreeBSD__
 	case IMSG_AGENTXSOCK:
 		agentx_getsock(imsg);
 		break;
+#endif
 	default:
 		return (-1);
 	}

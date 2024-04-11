@@ -40,7 +40,9 @@
 #include <net/pfvar.h>
 // FreeBSD #include <net/route.h>
 
+#ifndef __FreeBSD__
 #include <agentx.h>
+#endif
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -198,7 +200,7 @@ Removed tags:
 DESTINATION PRIORITY ROUTER RTLABEL RTABLE MATCH
 */
 
-%token	AGENTX APPEND BACKLOG BACKUP BINARY BUFFER CA CACHE SET CHECK CIPHERS
+%token	APPEND BACKLOG BACKUP BINARY BUFFER CA CACHE SET CHECK CIPHERS
 %token	CODE COOKIE DEMOTE DIGEST DISABLE ERROR EXPECT PASS BLOCK EXTERNAL
 %token	FILENAME FORWARD FROM HASH HEADER HEADERLEN HOST HTTP ICMP INCLUDE INET
 %token	INET6 INTERFACE INTERVAL IP KEYPAIR LABEL LISTEN VALUE LOADBALANCE LOG
@@ -2432,7 +2434,9 @@ lookup(char *s)
 {
 	/* this has to be sorted always */
 	static const struct keywords keywords[] = {
+#ifndef __FreeBSD__
 		{ "agentx",		AGENTX },
+#endif
 		{ "append",		APPEND },
 		{ "backlog",		BACKLOG },
 		{ "backup",		BACKUP },

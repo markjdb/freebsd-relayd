@@ -448,9 +448,11 @@ parent_dispatch_pfe(int fd, struct privsep_proc *p, struct imsg *imsg)
 	case IMSG_CFG_DONE:
 		parent_configure_done(env);
 		break;
+#ifndef __FreeBSD__
 	case IMSG_AGENTXSOCK:
 		agentx_setsock(env, p->p_id);
 		break;
+#endif
 	default:
 		return (-1);
 	}
