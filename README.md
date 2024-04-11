@@ -21,8 +21,8 @@ See `./configure -h` to learn how to modify the defaults such as the locations o
 2. Use `#if __FreeBSD__`, `#endif` to make FreeBSD specific blocks in
    source files.
 
-3. Use `# BEGIN FreeBSD-relayd`, `# END FreeBSD-relayd` comments to make
-   FreeBSD specific blocks in makefiles and configuration files
+3. Use `BEGIN FreeBSD-relayd` and `END FreeBSD-relayd` comment markers for
+   FreeBSD-specific blocks.
 
 ## FreeBSD relayd release process
 
