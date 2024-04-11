@@ -921,10 +921,17 @@ hashkey		: /* empty */		{
 				    strlen($1));
 				MD5Final((unsigned char *)$$.key.data,
 				    &context);
+#ifdef __FreeBSD__
+				htonl($$.key.data[0]);
+				htonl($$.key.data[1]);
+				htonl($$.key.data[2]);
+				htonl($$.key.data[3]);
+#else
 				HTONL($$.key.data[0]);
 				HTONL($$.key.data[1]);
 				HTONL($$.key.data[2]);
 				HTONL($$.key.data[3]);
+#endif
 			}
 			free($1);
 		}
