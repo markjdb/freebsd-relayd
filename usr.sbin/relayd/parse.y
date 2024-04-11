@@ -2463,7 +2463,9 @@ lookup(char *s)
 		{ "context",		CONTEXT },
 #endif
 		{ "cookie",		COOKIE },
+#ifndef __FreeBSD__
 		{ "curve",		CURVE },
+#endif
 /* FreeBSD exclude
 		{ "demote",		DEMOTE },
 		{ "destination",	DESTINATION },
