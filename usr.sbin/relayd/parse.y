@@ -2452,7 +2452,9 @@ lookup(char *s)
 		{ "ciphers",		CIPHERS },
 		{ "code",		CODE },
 		{ "connection",		CONNECTION },
+#ifndef __FreeBSD__
 		{ "context",		CONTEXT },
+#endif
 		{ "cookie",		COOKIE },
 		{ "curve",		CURVE },
 /* FreeBSD exclude
