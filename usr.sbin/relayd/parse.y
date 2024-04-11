@@ -223,7 +223,12 @@ DESTINATION PRIORITY ROUTER RTLABEL RTABLE MATCH
 %token	WEBSOCKETS
 %token	<v.string>	STRING
 %token  <v.number>	NUMBER
+/* BEGIN FreeBSD-relayd
 %type	<v.string>	context hostname interface table value path
+ * END FreeBSD-relayd */
+/* BEGIN FreeBSD-relayd */
+%type	<v.string>	hostname interface table value
+/* END FreeBSD-relayd */
 %type	<v.number>	http_type loglevel quick
 %type	<v.number>	dstmode flag forwardmode retry
 %type	<v.number>	opttls opttlsclient
