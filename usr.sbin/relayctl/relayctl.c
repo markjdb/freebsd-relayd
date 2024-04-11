@@ -21,6 +21,9 @@
  */
 
 #include <sys/types.h>
+#ifdef __FreeBSD__
+#include <sys/param.h>
+#endif
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/queue.h>
