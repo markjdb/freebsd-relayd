@@ -356,8 +356,10 @@ relay_init(struct privsep *ps, struct privsep_proc *p, void *arg)
 	/* Unlimited file descriptors (use system limits) */
 	socket_rlimit(-1);
 
+#ifndef __FreeBSD__
 	if (pledge("stdio recvfd inet", NULL) == -1)
 		fatal("pledge");
+#endif
 
 	/* Schedule statistics timer */
 	evtimer_set(&env->sc_statev, relay_statistics, ps);

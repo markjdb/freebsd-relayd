@@ -231,10 +231,12 @@ main(int argc, char *argv[])
 	if (ps->ps_noaction == 0)
 		log_info("startup");
 
+#ifndef __FreeBSD__
 	if (unveil("/", "rx") == -1)
 		err(1, "unveil /");
 	if (unveil(NULL, NULL) == -1)
 		err(1, "unveil");
+#endif
 
 	event_init();
 

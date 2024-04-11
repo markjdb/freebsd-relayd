@@ -84,8 +84,10 @@ pfe_init(struct privsep *ps, struct privsep_proc *p, void *arg)
 	if (config_init(ps->ps_env) == -1)
 		fatal("failed to initialize configuration");
 
+#ifndef __FreeBSD__
 	if (pledge("stdio recvfd unix pf", NULL) == -1)
 		fatal("pledge");
+#endif
 
 	p->p_shutdown = pfe_shutdown;
 }
