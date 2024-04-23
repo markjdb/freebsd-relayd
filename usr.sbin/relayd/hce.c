@@ -196,6 +196,7 @@ hce_launch_checks(int fd, short event, void *arg)
 void
 hce_notify_done(struct host *host, enum host_error he)
 {
+	char			 hostname[HOST_NAME_MAX + 1 + 5 /* port */];
 	struct table		*table;
 	struct ctl_status	 st;
 	struct timeval		 tv_now, tv_dur;
@@ -212,11 +213,25 @@ hce_notify_done(struct host *host, enum host_error he)
 	if ((table = table_find(env, host->conf.tableid)) == NULL)
 		fatalx("%s: invalid table id", __func__);
 
+	switch (host->conf.ss.ss_family) {
+	case AF_INET:
+		snprintf(hostname, sizeof(hostname), "%s:%d", host->conf.name,
+		    ntohs(((struct sockaddr_in *)&host->conf.ss)->sin_port));
+		break;
+	case AF_INET6:
+		snprintf(hostname, sizeof(hostname), "%s:%d", host->conf.name,
+		    ntohs(((struct sockaddr_in6 *)&host->conf.ss)->sin6_port));
+		break;
+	default:
+		snprintf(hostname, sizeof(hostname), "%s", host->conf.name);
+		break;
+	}
+
 	if (hostnst->flags & F_DISABLE) {
 		if (env->sc_conf.opts & RELAYD_OPT_LOGUPDATE) {
 			log_info("host %s, check %s%s (ignoring result, "
 			    "host disabled)",
-			    host->conf.name, table_check(table->conf.check),
+			    hostname, table_check(table->conf.check),
 			    (table->conf.flags & F_TLS) ? " use tls" : "");
 		}
 		host->flags |= (F_CHECK_SENT|F_CHECK_DONE);
@@ -228,7 +243,7 @@ hce_notify_done(struct host *host, enum host_error he)
 
 	if (host->up == HOST_DOWN && host->retry_cnt) {
 		log_debug("%s: host %s retry %d", __func__,
-		    host->conf.name, host->retry_cnt);
+		    hostname, host->retry_cnt);
 		host->up = host->last_up;
 		host->retry_cnt--;
 	} else
@@ -246,7 +261,7 @@ hce_notify_done(struct host *host, enum host_error he)
 	host->flags |= (F_CHECK_SENT|F_CHECK_DONE);
 	msg = host_error(he);
 	if (msg)
-		log_debug("%s: %s (%s)", __func__, host->conf.name, msg);
+		log_debug("%s: %s (%s)", __func__, hostname, msg);
 
 	proc_compose(env->sc_ps, PROC_PFE, IMSG_HOST_STATUS, &st, sizeof(st));
 	if (host->up != host->last_up)
@@ -264,7 +279,7 @@ hce_notify_done(struct host *host, enum host_error he)
 		    asprintf(&codemsg, ",%d", host->code);
 		log_info("host %s, check %s%s (%lums,%s%s), state %s -> %s, "
 		    "availability %s",
-		    host->conf.name, table_check(table->conf.check),
+		    hostname, table_check(table->conf.check),
 		    (table->conf.flags & F_TLS) ? " use tls" : "", duration,
 		    msg, (codemsg != NULL) ? codemsg : "",
 		    host_status(host->last_up), host_status(host->up),
