@@ -481,7 +481,6 @@ struct host {
 	u_long			 up_cnt;
 	int			 retry_cnt;
 	int			 idx;
-	u_int64_t		 reload_gen;
 	u_int16_t		 he;
 	int			 code;
 	struct ctl_tcp_event	 cte;
@@ -1207,7 +1206,6 @@ struct relayd {
 
 	struct privsep		*sc_ps;
 	int			 sc_reload;
-	u_int64_t		 sc_reload_gen;
 };
 
 #define RELAYD_OPT_VERBOSE		0x01
