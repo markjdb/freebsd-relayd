@@ -237,17 +237,20 @@ send_icmp(int s, short event, void *arg)
 				} else {
 					/* Revert to default TTL */
 #ifdef __FreeBSD__
-				mib[0] = CTL_NET;
-				mib[1] = cie->af;
-				mib[2] = IPPROTO_IP;
-				mib[3] = IPCTL_DEFTTL;
-				len = sizeof(ttl);
-				if (sysctl(mib, 4, &ttl, &len, NULL, 0) == 0)
-					if (setsockopt(s, IPPROTO_IP, IP_TTL,
-					    &ttl, sizeof(ttl) == -1))
-						log_warn(
-						    "%s: setsockopt",
-						    __func__);
+					mib[0] = CTL_NET;
+					mib[1] = cie->af;
+					mib[2] = IPPROTO_IP;
+					mib[3] = IPCTL_DEFTTL;
+					len = sizeof(ttl);
+					if (sysctl(mib, 4, &ttl, &len, NULL,
+					    0) == 0) {
+						if (setsockopt(s, IPPROTO_IP,
+						    IP_TTL, &ttl,
+						    sizeof(ttl) == -1))
+							log_warn(
+							    "%s: setsockopt",
+							    __func__);
+					}
 #else
 					len = sizeof(ttl);
 					if (getsockopt(s, IPPROTO_IP,
