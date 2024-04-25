@@ -246,7 +246,7 @@ send_icmp(int s, short event, void *arg)
 					    0) == 0) {
 						if (setsockopt(s, IPPROTO_IP,
 						    IP_TTL, &ttl,
-						    sizeof(ttl) == -1))
+						    sizeof(ttl)) == -1)
 							log_warn(
 							    "%s: setsockopt",
 							    __func__);
