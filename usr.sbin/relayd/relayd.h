@@ -162,6 +162,7 @@ struct ctl_status {
 	int		 up;
 	int		 retry_cnt;
 	u_long		 check_cnt;
+	u_int64_t	 config_gen;
 	u_int16_t	 he;
 };
 
@@ -193,6 +194,7 @@ struct ctl_relayfd {
 
 struct ctl_script {
 	objid_t		 host;
+	u_int64_t	 config_gen;
 	int		 retval;
 	struct timeval	 timeout;
 	char		 name[HOST_NAME_MAX+1];
@@ -481,6 +483,7 @@ struct host {
 	u_long			 up_cnt;
 	int			 retry_cnt;
 	int			 idx;
+	u_int64_t		 config_gen;
 	u_int16_t		 he;
 	int			 code;
 	struct ctl_tcp_event	 cte;
@@ -1059,7 +1062,7 @@ enum imsg_type {
 	IMSG_CA_PRIVDEC,
 	IMSG_SESS_PUBLISH,	/* from relay to pfe */
 	IMSG_SESS_UNPUBLISH,
-	IMSG_TLSTICKET_REKEY
+	IMSG_TLSTICKET_REKEY,
 };
 
 enum privsep_procid {
@@ -1206,6 +1209,8 @@ struct relayd {
 
 	struct privsep		*sc_ps;
 	int			 sc_reload;
+	int			 sc_started;
+	u_int64_t		 sc_config_gen;
 };
 
 #define RELAYD_OPT_VERBOSE		0x01
