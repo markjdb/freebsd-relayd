@@ -153,6 +153,8 @@ config_purge(struct relayd *env, u_int reset)
 	struct keyname		*keyname;
 	u_int			 what;
 
+	env->sc_started = 0;
+
 	what = ps->ps_what[privsep_process] & reset;
 
 	if (what & CONFIG_TABLES && env->sc_tables != NULL) {
@@ -264,6 +266,8 @@ config_getreset(struct relayd *env, struct imsg *imsg)
 	memcpy(&mode, imsg->data, sizeof(mode));
 
 	config_purge(env, mode);
+
+	env->sc_config_gen++;
 
 	return (0);
 }

@@ -1976,6 +1976,8 @@ relay_dispatch_pfe(int fd, struct privsep_proc *p, struct imsg *imsg)
 	case IMSG_HOST_STATUS:
 		IMSG_SIZE_CHECK(imsg, &st);
 		memcpy(&st, imsg->data, sizeof(st));
+		if (st.config_gen != env->sc_config_gen)
+			break;
 		if ((host = host_find(env, st.id)) == NULL)
 			fatalx("%s: invalid host id", __func__);
 		if (host->flags & F_DISABLE)

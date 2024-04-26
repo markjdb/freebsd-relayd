@@ -48,6 +48,7 @@ check_script(struct relayd *env, struct host *host)
 	host->flags &= ~(F_CHECK_SENT|F_CHECK_DONE);
 
 	scr.host = host->conf.id;
+	scr.config_gen = env->sc_config_gen;
 	if ((strlcpy(scr.name, host->conf.name,sizeof(scr.name)) >=
 	    sizeof(scr.name)) ||
 	    (strlcpy(scr.path, table->conf.path, sizeof(scr.path)) >=
@@ -64,6 +65,12 @@ void
 script_done(struct relayd *env, struct ctl_script *scr)
 {
 	struct host		*host;
+
+	if (scr->config_gen != env->sc_config_gen) {
+		log_debug("script check for %s interrupted, ignoring",
+		    scr->name);
+		return;
+	}
 
 	if ((host = host_find(env, scr->host)) == NULL)
 		fatalx("%s: invalid host id", __func__);
