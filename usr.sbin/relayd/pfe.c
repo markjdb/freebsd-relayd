@@ -125,11 +125,12 @@ pfe_setup_events(void)
 	struct timeval	 tv;
 
 	/* Schedule statistics timer */
-	if (!event_initialized(&env->sc_statev)) {
+	if (!event_initialized(&env->sc_statev))
 		evtimer_set(&env->sc_statev, pfe_statistics, NULL);
-		bcopy(&env->sc_conf.statinterval, &tv, sizeof(tv));
-		evtimer_add(&env->sc_statev, &tv);
-	}
+	bcopy(&env->sc_conf.statinterval, &tv, sizeof(tv));
+	evtimer_add(&env->sc_statev, &tv);
+
+	env->sc_started = 1;
 }
 
 void
@@ -151,6 +152,10 @@ pfe_dispatch_hce(int fd, struct privsep_proc *p, struct imsg *imsg)
 	case IMSG_HOST_STATUS:
 		IMSG_SIZE_CHECK(imsg, &st);
 		memcpy(&st, imsg->data, sizeof(st));
+		if (st.config_gen != env->sc_config_gen) {
+			log_debug("%s: reload gen mismatch", __func__);
+			break;
+		}
 		if ((host = host_find(env, st.id)) == NULL)
 			fatalx("%s: invalid host id", __func__);
 		host->he = st.he;
@@ -286,6 +291,7 @@ pfe_dispatch_relay(int fd, struct privsep_proc *p, struct imsg *imsg)
 	struct relay		*rlay;
 	struct ctl_conn		*c;
 	struct rsession		 con, *s, *t;
+	u_int64_t		 config_gen;
 	int			 cid;
 	objid_t			 sid;
 
