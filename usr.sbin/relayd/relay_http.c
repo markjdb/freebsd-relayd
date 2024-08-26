@@ -724,7 +724,7 @@ relay_read_http(struct bufferevent *bev, void *arg)
 		relay_close(con, "last http read (done)", 0);
 		return;
 	}
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	switch (relay_splice(cre)) {
 	case -1:
 		relay_close(con, strerror(errno), 1);
@@ -764,7 +764,7 @@ relay_read_httpcontent(struct bufferevent *bev, void *arg)
 	    con->se_id, size, cre->toread);
 	if (!size)
 		return;
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	if (relay_spliceadjust(cre) == -1)
 		goto fail;
 #endif
@@ -827,7 +827,7 @@ relay_read_httpchunks(struct bufferevent *bev, void *arg)
 	    con->se_id, size, cre->toread);
 	if (!size)
 		return;
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	if (relay_spliceadjust(cre) == -1)
 		goto fail;
 #endif
