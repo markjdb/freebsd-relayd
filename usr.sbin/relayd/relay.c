@@ -804,7 +804,7 @@ relay_connected(int fd, short sig, void *arg)
 	if (con->se_in.bev)
 		bufferevent_enable(con->se_in.bev, EV_READ);
 
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	if (relay_splice(&con->se_out) == -1)
 		relay_close(con, strerror(errno), 1);
 #endif
@@ -855,7 +855,7 @@ relay_input(struct rsession *con)
 		RELAY_MIN_PREFETCHED * proto->tcpbufsiz, 0);
 	bufferevent_enable(con->se_in.bev, EV_READ|EV_WRITE);
 
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	if (relay_splice(&con->se_in) == -1)
 		relay_close(con, strerror(errno), 1);
 #endif
@@ -873,7 +873,7 @@ relay_write(struct bufferevent *bev, void *arg)
 		goto done;
 	if (cre->dst->bev)
 		bufferevent_enable(cre->dst->bev, EV_READ);
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	if (relay_splice(cre->dst) == -1)
 		goto fail;
 #endif
@@ -881,7 +881,7 @@ relay_write(struct bufferevent *bev, void *arg)
  done:
 	relay_close(con, "last write (done)", 0);
 	return;
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
  fail:
 	relay_close(con, strerror(errno), 1);
 #endif
@@ -936,7 +936,7 @@ relay_read(struct bufferevent *bev, void *arg)
 	relay_close(con, strerror(errno), 1);
 }
 
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 int
 relay_splice(struct ctl_relay_event *cre)
 {
@@ -1050,7 +1050,7 @@ relay_error(struct bufferevent *bev, short error, void *arg)
 	DPRINTF("%s: session %d: dir %d state %d to read %lld event error %x",
 		__func__, con->se_id, cre->dir, cre->state, cre->toread, error);
 	if (error & EVBUFFER_TIMEOUT) {
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 		if (cre->splicelen >= 0) {
 			bufferevent_enable(bev, EV_READ);
 		} else if (cre->dst->splicelen >= 0) {
@@ -1074,7 +1074,7 @@ relay_error(struct bufferevent *bev, short error, void *arg)
 		return;
 	}
 	if (error & EVBUFFER_ERROR && errno == ETIMEDOUT) {
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 		if (cre->dst->splicelen >= 0) {
 			switch (relay_splicelen(cre->dst)) {
 			case -1:
@@ -1100,7 +1100,7 @@ relay_error(struct bufferevent *bev, short error, void *arg)
 		return;
 	}
 	if (error & EVBUFFER_ERROR && errno == EFBIG) {
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 		if (relay_spliceadjust(cre) == -1)
 			goto fail;
 		bufferevent_enable(cre->bev, EV_READ);
@@ -1125,7 +1125,7 @@ relay_error(struct bufferevent *bev, short error, void *arg)
 	}
 	relay_close(con, "buffer event error", 1);
 	return;
-#ifndef __FreeBSD__ /* no socket splicing */
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
  fail:
 	relay_close(con, strerror(errno), 1);
 #endif
@@ -1187,7 +1187,7 @@ relay_accept(int fd, short event, void *arg)
 	con->se_out.dst = &con->se_in;
 	con->se_in.con = con;
 	con->se_out.con = con;
-#ifndef __FreeBSD__
+#if !defined(__FreeBSD__) || defined(SO_SPLICE)
 	con->se_in.splicelen = -1;
 	con->se_out.splicelen = -1;
 #endif
